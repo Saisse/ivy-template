@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="ant-ivy" default="setup.ivy" basedir="." 
+   xmlns:ivy="antlib:org.apache.ivy.ant">
+  
+  <property file="build.properties"/>
+
+  <property name="ivy.version" value="2.0.0-rc2" />
+  <property name="ivy.home" value="${user.home}/.ivy" />
+  <property name="ivy.jar.dir" value="${ivy.home}/lib" />
+  <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy-${ivy.version}.jar" />
+
+  <target name="download.ivy">
+    <mkdir dir="${ivy.jar.dir}"/>
+    <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"
+      dest="${ivy.jar.file}" usetimestamp="true"/>
+  </target>
+
+  <target name="setup.ivy" depends="download.ivy">
+    <taskdef resource="org/apache/ivy/ant/antlib.xml"
+         uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar.dir}/ivy-${ivy.version}.jar"/>
+    <ivy:settings file="ivy-settings.xml" />
+  </target>
+
+  <target name="ivy.clean" depends="setup.ivy">
+    <ivy:cleancache />
+  </target>
+
+  <target name="ivy.report" depends="setup.ivy">
+    <ivy:resolve/>
+    <ivy:report todir="${dir.ivy.report}" />
+  </target>
+
+</project>

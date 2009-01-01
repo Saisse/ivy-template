@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="ant-scala" default="test" basedir="." 
+   xmlns:ivy="antlib:org.apache.ivy.ant">
+  
+  <property file="build.properties"/>
+  <import file="ant-ivy.xml"/>
+
+  <property name="dir.main.scala" value="src/main/scala" />
+  <property name="dir.test.scala" value="src/test/scala" />
+  <property name="dir.build" value="build" />
+  <property name="dir.main.classes" value="${dir.build}/classes" />
+  <property name="dir.test.classes" value="${dir.build}/test-classes" />
+
+  <target name="setup.scala" depends="setup.ivy">
+    <ivy:resolve/>
+    <ivy:cachepath pathid="classpath.scala" conf="scala" />
+    <taskdef resource="scala/tools/ant/antlib.xml">
+       <classpath>
+         <fileset dir="${ivy.home}/cache">
+           <include name="**/scala-compiler-${scala.version}.jar" />
+           <include name="**/scala-library-${scala.version}.jar" />
+         </fileset>
+       </classpath>
+     </taskdef>
+   </target>
+
+  <target name="scala.compile" depends="setup.scala">
+
+    <mkdir dir="${dir.main.classes}"/>
+
+    <scalac destdir="${dir.main.classes}" srcdir="${dir.main.scala}">
+      <classpath refid="classpath.scala" />
+    </scalac>
+  </target>
+  
+  <target name="scala.test-compile" depends="scala.compile">
+    <ivy:cachepath pathid="classpath.ivy" />
+
+    <mkdir dir="${dir.test.classes}"/>
+
+    <scalac destdir="${dir.test.classes}" srcdir="${dir.test.scala}" >
+      <classpath >
+        <path refid="classpath.scala"/>
+        <path refid="classpath.ivy"/>
+        <path location="${dir.main.classes}" />
+      </classpath>
+    </scalac>
+  </target>
+  
+  <target name="scala.test" depends="scala.test-compile">
+    <junit haltonfailure="true" showoutput="true">
+      <classpath>
+        <path refid="classpath.scala"/>
+        <path refid="classpath.ivy"/>
+        <path location="${dir.main.classes}"/>
+        <path location="${dir.test.classes}"/>
+      </classpath>
+      <formatter type="brief" usefile="false" />
+      <batchtest fork="yes">
+        <fileset dir="${dir.test.classes}">
+          <include name="**/*Test.class" />
+          <exclude name="**/All*Test.class" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+  <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" />
+  
+  <target name="clean">
+    <delete dir="${dir.build}" />
+  </target>
+
+</project>

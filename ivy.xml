@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="./config/ivy/ivy-doc.xsl"?>
+
+<ivy-module version="2.0">
+  <info organisation="jp.saisse" module="xphere" />
+  <configurations>
+    <conf name="compile" visibility="private"/>
+    <conf name="runtime" visibility="private"/>
+    <conf name="test" visibility="private"/>
+    <conf name="scala" visibility="private"/>
+  </configurations>
+  <dependencies>
+    <dependency org="org/scala-lang" name="scala-compiler" rev="2.7.2" conf="scala->default;compile->default" />
+    <dependency org="org/scala-lang" name="scala-library" rev="2.7.2" conf="scala->default;compile->default" />
+    <dependency org="org/specs" name="specs" rev="1.4.1" conf="test->default" />
+    <dependency org="junit" name="junit" rev="4.5" conf="test->default"/>
+  </dependencies>
+</ivy-module>
